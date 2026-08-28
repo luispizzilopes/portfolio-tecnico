@@ -148,17 +148,6 @@
       {%- endif -%}
       <p class="about-footer {{condensed_class}}">&copy;
         {{ "now" | date: "%Y" }}</p>
-      {%- if site.plainwhite.dark_mode -%}
-      <div class="about-footer {{condensed_class}}">
-        <p>Dark Mode
-          <i class="icon-moon"></i>
-          <label class="switch">
-            <input type="checkbox" class="dark-mode-toggle">
-            <span class="slider round" onclick="toggleDarkMode()"></span>
-          </label>
-        </p>
-      </div>
-      {%- endif -%}
       {% endcapture %}
       {{ footer }}
     </section>
@@ -169,9 +158,6 @@
       {{ footer }}
     </footer>
   </main>
-  {% if site.plainwhite.dark_mode %}
-  <script type="text/javascript" src="{{ "/assets/js/darkmode.js" | relative_url }}"></script>
-  {% endif %}
 
   {%- if site.plainwhite.analytics_id -%}
   <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.plainwhite.analytics_id }}"></script>

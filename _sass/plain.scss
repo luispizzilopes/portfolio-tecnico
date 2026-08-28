@@ -2,7 +2,7 @@
 @import "ext/normalize";
 @import "syntax";
 
-$linkColor: #0a59b0;
+$linkColor: $accent-primary;
 $mobileW: 768px;
 $smallMobileW: 480px;
 $bigScreenW: 1600px;
@@ -15,10 +15,12 @@ $leftWidth: 220px;
 }
 
 body {
-  font-family: "Raleway", sans-serif;
+  font-family: $font-primary;
   font-size: 16px;
   line-height: 1.2em;
   margin: 0;
+  background-color: $bg-primary;
+  color: $text-primary;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -31,7 +33,7 @@ video {
 }
 
 a {
-  color: #000;
+  color: $text-primary;
   transition: color 0.3s;
   &:hover {
     color: $linkColor;
@@ -98,19 +100,22 @@ main {
       font-size: 22px;
       margin-top: 25px;
       margin-bottom: 0;
-      color: #222222;
+      color: $text-primary;
       font-weight: normal;
     }
     .tagline {
       text-align: center;
       font-size: 22px;
       margin-top: 0px;
-      color: #aaa;
+      color: $text-secondary;
       white-space: pre-wrap;
       line-height: normal;
     }
     img {
       max-width: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      aspect-ratio: 1 / 1;
     }
     img.dark {
       display: none;
@@ -164,11 +169,11 @@ main {
 
     a {
       display: block;
-      font-family: 'Merriweather';
+      font-family: $font-primary;
       text-align: center;
       padding: 1rem 0;
       text-decoration: none;
-      border-bottom: 1px solid #ececec;
+      border-bottom: 1px solid $border-color;
 
       @media screen and (max-width: $mobileW) {
         padding: 2rem 0;
@@ -178,7 +183,7 @@ main {
 }
 
 .post-wrapper {
-  border-bottom: 1px solid #ececec;
+  border-bottom: 1px solid $border-color;
   margin-bottom: 1rem;
   padding-bottom: 1rem;
 }
@@ -190,7 +195,7 @@ main {
   li {
     font-size: 14px;
     float: left;
-    background-color: #e3e3e3;
+    background-color: $bg-secondary;
     padding: 5px 20px;
     border-radius: 2px;
     @media screen and (max-width: $mobileW) {
@@ -201,7 +206,7 @@ main {
 }
 .post-date {
   margin-right: 10px;
-  color: #555;
+  color: $text-muted;
   min-width: 150px;
 }
 .post-meta {
@@ -226,7 +231,7 @@ main {
   margin-bottom: 20px;
   font-size: 14px;
   text-decoration: none;
-  color: #666;
+  color: $text-secondary;
   &:hover {
     color: $linkColor;
   }
@@ -254,9 +259,9 @@ main {
   padding-left: 30px;
 }
 .post {
-  font-family: "Merriweather", sans-serif;
+  font-family: $font-primary;
   font-weight: 300;
-  color: #222;
+  color: $text-primary;
   line-height: 1.9em;
   p {
     margin-top: 10px;
@@ -275,19 +280,19 @@ main {
   h4,
   h5,
   h6 {
-    font-family: Raleway, sans-serif;
+    font-family: $font-primary;
   }
 }
 .posts-labelgroup {
   margin: 0 0 0.67em 0;
   display: flex;
   align-items: baseline;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid $border-color;
 }
 
 #posts-label {
   font-size: 15px;
-  color: #555;
+  color: $text-secondary;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 10px 0;
@@ -299,11 +304,11 @@ main {
 table {
   th, td {
     padding: 8px 13px;
-    border: 1px solid #dfe2e5;
+    border: 1px solid $border-color;
   }
   th {
-    background-color: #eee;
-    font-family: Raleway;
+    background-color: $bg-secondary;
+    font-family: $font-primary;
   }
 }
 
@@ -342,6 +347,6 @@ footer {
     @media screen and (max-width: $smallMobileW){
       margin: 0 20px;
     }
-    border-top: 1px solid #eee;
+    border-top: 1px solid $border-color;
   }
 }

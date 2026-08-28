@@ -13,7 +13,6 @@ plainwhite:
   date_format: "%b %-d, %Y"
   sitemap: true
   search: true
-  dark_mode: true # toggle disponível, padrão é tema claro
   portfolio_image: "assets/portfolio.png"
   html_lang: "pt-BR"
   condensed_mobile:
