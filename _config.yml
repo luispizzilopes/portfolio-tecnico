@@ -1,0 +1,41 @@
+title: Luis Felipe - Dev Blog
+author: Luis Felipe Pizzi Lopes
+email: luisfelipe1203lf@gmail.com
+description: >
+  Publicações sobre código, arquitetura, ferramentas e aprendizados do dia a dia como desenvolvedor.
+show_excerpts: true # set to true to show excerpts on the homepage
+
+sass:
+  sass_dir: _sass
+plainwhite:
+  name: Luis Felipe Pizzi Lopes
+  tagline: Full Stack Developer
+  date_format: "%b %-d, %Y"
+  sitemap: true
+  search: true
+  dark_mode: true # toggle disponível, padrão é tema claro
+  portfolio_image: "assets/portfolio.png"
+  html_lang: "pt-BR"
+  condensed_mobile:
+    #- home
+    - page
+    - post
+  social_links:
+    github: luispizzilopes
+    linkedIn: in/luis-felipe-pizzi-lopes
+    email: luisfelipe1203lf@gmail.com
+
+    # Mastodon instances
+    # mastodon:
+    # - username: jekyll
+    #   instance: example.com
+
+#header_pages:
+# - about.md
+
+# Build settings
+theme: plainwhite
+
+plugins:
+  - jekyll-seo-tag
+#  - jekyll-feed
