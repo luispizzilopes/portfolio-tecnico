@@ -1,6 +1,18 @@
 [
   
     {
+      "title"    : "Modelagem de domínio quando parte dele não é seu: os desafios de integrações externas",
+      "title-lower"    : "modelagem de domínio quando parte dele não é seu: os desafios de integrações externas",
+      "sub-titile" : "",
+      "sub-titile-lower" : "",
+      "categories" : "C#.NETDomain-Driven DesignArquitetura",
+      "tags"     : "",
+      "url"      : "/2026/08/31/modelagem-de-dominio-quando-parte-dele-nao-e-seu/",
+      "date"     : "2026-08-31 00:00:00 -0300",
+      "content"     : "Quando assumimos o desenvolvimento de um sistema que precisa se integrar com um software externo, é comum pensarmos primeiro nos detalhes técnicos da comunicação: autenticação, protocolo, formato d..."
+    } ,
+  
+    {
       "title"    : "Olá, Mundo!",
       "title-lower"    : "olá, mundo!",
       "sub-titile" : "",

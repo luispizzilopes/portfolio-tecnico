@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link rel="stylesheet" href="/assets/css/style.css">
+<title>Modelagem de domínio quando parte dele não é seu: os desafios de integrações externas</title>
+<!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Modelagem de domínio quando parte dele não é seu: os desafios de integrações externas | Luis Felipe - Dev Blog</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Modelagem de domínio quando parte dele não é seu: os desafios de integrações externas" />
+<meta name="author" content="Luis Felipe Pizzi Lopes" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Quando assumimos o desenvolvimento de um sistema que precisa se integrar com um software externo, é comum pensarmos primeiro nos detalhes técnicos da comunicação: autenticação, protocolo, formato de payload, tratamento de erros. O que raramente discutimos com a mesma atenção é uma pergunta mais incômoda." />
+<meta name="twitter:description" property="og:description" content="Quando assumimos o desenvolvimento de um sistema que precisa se integrar com um software externo, é comum pensarmos primeiro nos detalhes técnicos da comunicação: autenticação, protocolo, formato de payload, tratamento de erros. O que raramente discutimos com a mesma atenção é uma pergunta mais incômoda." />
+<link rel="canonical" href="http://localhost:4000/2026/08/31/modelagem-de-dominio-quando-parte-dele-nao-e-seu/" />
+<meta property="og:url" content="http://localhost:4000/2026/08/31/modelagem-de-dominio-quando-parte-dele-nao-e-seu/" />
+<meta property="og:site_name" content="Luis Felipe - Dev Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-08-31T00:00:00-03:00" />
+<meta property="article:modified_time" content="2026-08-31T00:00:00-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Modelagem de domínio quando parte dele não é seu: os desafios de integrações externas" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Luis Felipe Pizzi Lopes"},"dateModified":"2026-08-31T00:00:00-03:00","datePublished":"2026-08-31T00:00:00-03:00","description":"Quando assumimos o desenvolvimento de um sistema que precisa se integrar com um software externo, é comum pensarmos primeiro nos detalhes técnicos da comunicação: autenticação, protocolo, formato de payload, tratamento de erros. O que raramente discutimos com a mesma atenção é uma pergunta mais incômoda.","headline":"Modelagem de domínio quando parte dele não é seu: os desafios de integrações externas","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2026/08/31/modelagem-de-dominio-quando-parte-dele-nao-e-seu/"},"url":"http://localhost:4000/2026/08/31/modelagem-de-dominio-quando-parte-dele-nao-e-seu/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/">
+        
+        <img src="/assets/portfolio.png" alt="Luis Felipe Pizzi Lopes" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/">Luis Felipe Pizzi Lopes</a>
+      </h2>
+      </div><p class="tagline">Full Stack Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/luispizzilopes" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/luis-felipe-pizzi-lopes" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><a href="mailto:luisfelipe1203lf@gmail.com" target="_blank">
+          <li>
+            <i class="icon-mail-alt"></i>
+          </li>
+        </a></ul><p class="about-footer condensed">&copy;
+        2026</p>
+      
+    </section>
+    <section class="content">
+      <div class="post-container">
+  <a class="back-link" href="/">← Voltar</a>
+  <a class="post-link" href="/2026/08/31/modelagem-de-dominio-quando-parte-dele-nao-e-seu/">
+    <h2 class="post-title">Modelagem de domínio quando parte dele não é seu: os desafios de integrações externas</h2>
+  </a>
+  <div class="post-meta">
+    <div class="post-date"><i class="icon-calendar"></i>Aug 31, 2026</div><ul class="post-categories"><li>C#</li><li>.NET</li><li>Domain-Driven Design</li><li>Arquitetura</li></ul></div>
+  <div class="post">
+    <p>Quando assumimos o desenvolvimento de um sistema que precisa se integrar com um software externo, é comum pensarmos primeiro nos detalhes técnicos da comunicação: autenticação, protocolo, formato de payload, tratamento de erros. O que raramente discutimos com a mesma atenção é uma pergunta mais incômoda.</p>
+
+<blockquote>
+  <p><strong>De quem é o domínio dessa informação?</strong></p>
+</blockquote>
+
+<p>Em muitos sistemas que desenvolvemos, parte do nosso domínio simplesmente não nasce dentro da nossa aplicação. Ele já existe, com suas próprias regras, seu próprio ciclo de vida e sua própria modelagem, dentro de outro sistema. E isso muda completamente a forma como devemos pensar a arquitetura.</p>
+
+<h2 id="o-cenário-um-módulo-de-vendas-integrado-ao-sap">O cenário: um módulo de vendas integrado ao SAP</h2>
+
+<p>Em um projeto que passei, fiz o desenvolvimento de um módulo de vendas dentro de um monolito que precisava se integrar ao SAP. Tínhamos, dentro da nossa aplicação, um domínio bem definido para usuários e controle de acesso por módulos. Até aí, tudo dentro do nosso contexto, com nossas regras, nossa linguagem, nosso desenho.</p>
+
+<p>O problema começou quando entramos nas informações centrais do processo de vendas: pedidos, esboços de documentos e itens de pedido. Essas informações não pertenciam ao nosso domínio, pertenciam ao domínio do SAP, materializadas em tabelas como:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ORDR</code>: cabeçalho de pedidos</li>
+  <li><code class="language-plaintext highlighter-rouge">ODRF</code>: esboços de documentos</li>
+  <li><code class="language-plaintext highlighter-rouge">RDR1</code>: linhas de um pedido</li>
+</ul>
+
+<p>A decisão tomada na época foi trazer esses dados para dentro da nossa camada de domínio via <strong>scaffold</strong>, em um <code class="language-plaintext highlighter-rouge">DbContext</code> separado, apontando diretamente para o banco do SAP.</p>
+
+<h2 id="o-problema-um-domínio-anêmico-e-ilegível">O problema: um domínio anêmico e ilegível</h2>
+
+<p>O scaffold resolveu o problema de curto prazo: conseguimos ler e persistir dados rapidamente. Mas gerou dois problemas sérios que só ficaram evidentes com o tempo.</p>
+
+<h3 id="1-domínio-anêmico">1. Domínio anêmico</h3>
+
+<p>As classes geradas eram, na prática, DTOs disfarçados de entidades. Nenhuma regra de negócio, nenhum comportamento, apenas propriedades públicas mapeando colunas:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Classe gerada via scaffold, sem nenhuma regra de domínio</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">ORDR</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">DocEntry</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">DocNum</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">CardCode</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="n">DateTime</span><span class="p">?</span> <span class="n">DocDate</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">DocStatus</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">double</span><span class="p">?</span> <span class="n">DocTotal</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="c1">// ... dezenas de outras propriedades</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Qualquer regra que precisássemos aplicar, como “um pedido só pode ser cancelado se estiver em aberto”, por exemplo, acabava espalhada em services, sem nenhum lugar natural para viver. Isso é o oposto do que buscamos ao modelar um domínio rico.</p>
+
+<h3 id="2-nomenclatura-ilegível">2. Nomenclatura ilegível</h3>
+
+<p>Como o scaffold gera as propriedades a partir dos nomes originais das colunas, o código passou a carregar nomenclaturas que só faziam sentido para quem conhecia a documentação do SAP:</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// O que é "U_TipoFrete"? O que significa "TransportationCode"?</span>
+<span class="c1">// A resposta só estava na documentação do SAP, não no código.</span>
+<span class="kt">var</span> <span class="n">pedido</span> <span class="p">=</span> <span class="n">context</span><span class="p">.</span><span class="n">ORDR</span>
+    <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">o</span><span class="p">.</span><span class="n">DocStatus</span> <span class="p">==</span> <span class="s">"O"</span> <span class="p">&amp;&amp;</span> <span class="n">o</span><span class="p">.</span><span class="n">U_TipoFrete</span> <span class="p">==</span> <span class="s">"1"</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">FirstOrDefault</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>O código deixou de comunicar intenção. Para entender uma consulta simples, era preciso abrir a documentação do SAP ao lado do editor. Isso é uma dívida técnica silenciosa: não trava a aplicação, mas trava o desenvolvedor.</p>
+
+<h2 id="o-que-eu-faria-diferente-hoje">O que eu faria diferente hoje</h2>
+
+<p>Vale separar dois pontos aqui, porque nem tudo estava errado na decisão original.</p>
+
+<p><strong>O que eu manteria:</strong> no cenário em questão, não havia como trazer esse contexto de leitura para dentro da nossa aplicação de outra forma. O SAP disponibiliza uma integração REST oficial (a <strong>Service Layer</strong>), mas ela não cobria as consultas que precisávamos fazer: eram filtros e cruzamentos mais específicos, fora do que a documentação da Service Layer oferecia de forma nativa. Isso nos deixou sem alternativa além de consultar o banco diretamente, já que o SAP era a fonte da verdade dessas informações. Essa parte, hoje, eu manteria como estava.</p>
+
+<p><strong>O que eu mudaria:</strong> a forma como esses dados chegavam até o domínio. Em vez de expor as entidades geradas por scaffold diretamente na camada de domínio, eu criaria uma <strong>entidade própria do core da aplicação</strong>, com nomes e semântica que fazem sentido para o nosso negócio, e usaria o mapeamento do próprio ORM para traduzir entre a entidade e a tabela externa.</p>
+
+<p>No caso do EF Core, isso é feito de forma simples e elegante via <strong>Fluent API</strong>.</p>
+
+<h3 id="passo-1-entidade-pertencente-ao-nosso-domínio">Passo 1: Entidade pertencente ao nosso domínio</h3>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Entidade do nosso core, com nomes e comportamento que fazem sentido pra nós</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">SalesOrder</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">Id</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Number</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">CustomerCode</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="n">DateTime</span><span class="p">?</span> <span class="n">IssueDate</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="n">SalesOrderStatus</span> <span class="n">Status</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">decimal</span> <span class="n">TotalAmount</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="c1">// Regra de domínio vivendo onde deveria viver</span>
+    <span class="k">public</span> <span class="kt">bool</span> <span class="nf">CanBeCancelled</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="n">Status</span> <span class="p">==</span> <span class="n">SalesOrderStatus</span><span class="p">.</span><span class="n">Open</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">enum</span> <span class="n">SalesOrderStatus</span>
+<span class="p">{</span>
+    <span class="n">Open</span><span class="p">,</span>
+    <span class="n">Closed</span><span class="p">,</span>
+    <span class="n">Cancelled</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="passo-2-mapeamento-via-fluent-api">Passo 2: Mapeamento via Fluent API</h3>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SalesOrderMap</span> <span class="p">:</span> <span class="n">IEntityTypeConfiguration</span><span class="p">&lt;</span><span class="n">SalesOrder</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">(</span><span class="n">EntityTypeBuilder</span><span class="p">&lt;</span><span class="n">SalesOrder</span><span class="p">&gt;</span> <span class="n">builder</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">builder</span><span class="p">.</span><span class="nf">ToTable</span><span class="p">(</span><span class="s">"ORDR"</span><span class="p">);</span> <span class="c1">// tabela real do SAP</span>
+
+        <span class="n">builder</span><span class="p">.</span><span class="nf">HasKey</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Id</span><span class="p">);</span>
+
+        <span class="n">builder</span><span class="p">.</span><span class="nf">Property</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Id</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">HasColumnName</span><span class="p">(</span><span class="s">"DocEntry"</span><span class="p">);</span>
+
+        <span class="n">builder</span><span class="p">.</span><span class="nf">Property</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Number</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">HasColumnName</span><span class="p">(</span><span class="s">"DocNum"</span><span class="p">);</span>
+
+        <span class="n">builder</span><span class="p">.</span><span class="nf">Property</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">CustomerCode</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">HasColumnName</span><span class="p">(</span><span class="s">"CardCode"</span><span class="p">);</span>
+
+        <span class="n">builder</span><span class="p">.</span><span class="nf">Property</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">IssueDate</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">HasColumnName</span><span class="p">(</span><span class="s">"DocDate"</span><span class="p">);</span>
+
+        <span class="n">builder</span><span class="p">.</span><span class="nf">Property</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">TotalAmount</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">HasColumnName</span><span class="p">(</span><span class="s">"DocTotal"</span><span class="p">);</span>
+
+        <span class="c1">// Conversão de valores "místicos" do SAP para algo que faz sentido no domínio</span>
+        <span class="n">builder</span><span class="p">.</span><span class="nf">Property</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Status</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">HasColumnName</span><span class="p">(</span><span class="s">"DocStatus"</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">HasConversion</span><span class="p">(</span>
+                <span class="n">status</span> <span class="p">=&gt;</span> <span class="n">status</span> <span class="p">==</span> <span class="n">SalesOrderStatus</span><span class="p">.</span><span class="n">Open</span> <span class="p">?</span> <span class="s">"O"</span> <span class="p">:</span> <span class="s">"C"</span><span class="p">,</span>
+                <span class="n">sapValue</span> <span class="p">=&gt;</span> <span class="n">sapValue</span> <span class="p">==</span> <span class="s">"O"</span> <span class="p">?</span> <span class="n">SalesOrderStatus</span><span class="p">.</span><span class="n">Open</span> <span class="p">:</span> <span class="n">SalesOrderStatus</span><span class="p">.</span><span class="n">Closed</span>
+            <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="passo-3-consulta-legível">Passo 3: Consulta legível</h3>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">var</span> <span class="n">openOrders</span> <span class="p">=</span> <span class="n">context</span><span class="p">.</span><span class="n">SalesOrders</span>
+    <span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Status</span> <span class="p">==</span> <span class="n">SalesOrderStatus</span><span class="p">.</span><span class="n">Open</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">ToList</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>O resultado é uma diferença enorme de legibilidade. Ninguém precisa saber que <code class="language-plaintext highlighter-rouge">DocStatus = "O"</code> significa “aberto”: essa tradução acontece uma única vez, no mapeamento, e nunca mais precisa ser lembrada pelo resto da aplicação.</p>
+
+<h3 id="passo-4-consultas-complexas-em-um-repositório-de-leitura-sobre-uma-view">Passo 4: Consultas complexas em um repositório de leitura, sobre uma view</h3>
+
+<p>Outra mudança que eu faria hoje: as consultas mais complexas (aquelas com filtros e cruzamentos específicos que nem a Service Layer nem um mapeamento simples de entidade resolvem bem) eu não deixaria soltas em LINQ espalhado pela aplicação. Eu colocaria essa lógica em uma <strong>view construída previamente no próprio banco do SAP</strong>, e consumiria essa view através de um repositório dedicado, de somente leitura.</p>
+
+<p>Isso traz dois ganhos diretos: a performance melhora, porque o processamento pesado roda a nível de banco de dados, já otimizado para leitura; e a lógica da consulta fica centralizada em um único lugar, a view, em vez de reimplementada (e reinterpretada) toda vez que alguém precisa de uma variação da mesma informação.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Modelo de leitura, mapeado para uma view (sem tracking, sem regras de escrita)</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">OpenSalesOrderSummary</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">OrderNumber</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">CustomerCode</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">decimal</span> <span class="n">TotalAmount</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">OpenItemsCount</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">interface</span> <span class="nc">ISalesOrderReadRepository</span>
+<span class="p">{</span>
+    <span class="n">Task</span><span class="p">&lt;</span><span class="n">IReadOnlyList</span><span class="p">&lt;</span><span class="n">OpenSalesOrderSummary</span><span class="p">&gt;&gt;</span> <span class="nf">GetOpenOrdersSummaryAsync</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">SalesOrderReadRepository</span> <span class="p">:</span> <span class="n">ISalesOrderReadRepository</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="n">SapReadDbContext</span> <span class="n">_context</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">SalesOrderReadRepository</span><span class="p">(</span><span class="n">SapReadDbContext</span> <span class="n">context</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_context</span> <span class="p">=</span> <span class="n">context</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">IReadOnlyList</span><span class="p">&lt;</span><span class="n">OpenSalesOrderSummary</span><span class="p">&gt;&gt;</span> <span class="nf">GetOpenOrdersSummaryAsync</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// vw_OpenSalesOrdersSummary é uma view criada no banco do SAP,</span>
+        <span class="c1">// já com os filtros e joins mais complexos resolvidos a nível de banco</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">_context</span><span class="p">.</span><span class="n">Set</span><span class="p">&lt;</span><span class="n">OpenSalesOrderSummary</span><span class="p">&gt;()</span>
+            <span class="p">.</span><span class="nf">FromSqlRaw</span><span class="p">(</span><span class="s">"SELECT * FROM vw_OpenSalesOrdersSummary"</span><span class="p">)</span>
+            <span class="p">.</span><span class="nf">AsNoTracking</span><span class="p">()</span>
+            <span class="p">.</span><span class="nf">ToListAsync</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Com isso, a entidade de domínio (<code class="language-plaintext highlighter-rouge">SalesOrder</code>) continua responsável pelo que é, de fato, domínio (regras e comportamento), enquanto o repositório de leitura assume as consultas mais elaboradas, sem misturar as duas responsabilidades.</p>
+
+<h3 id="um-ponto-que-ainda-não-tenho-certeza">Um ponto que ainda não tenho certeza</h3>
+
+<p>Tem uma outra mudança que fico em dúvida se faria hoje, e prefiro ser honesto sobre isso em vez de fingir uma certeza que não tenho: às vezes penso que um repositório deveria lidar <em>apenas</em> com lógica de banco de dados; em outros momentos, penso que ele pode (e talvez deva) lidar com tudo que diz respeito à leitura e persistência de um agregado, independente do meio.</p>
+
+<p>A questão surge porque, para persistência, escrever diretamente via SQL contra as tabelas do SAP não é uma opção segura: perderíamos as garantias, validações e regras internas que o próprio SAP aplica ao processar um pedido através da Service Layer. Ou seja, se a leitura pode (e às vezes precisa) ir direto ao banco, a escrita normalmente não pode.</p>
+
+<p>Uma possibilidade seria ter um repositório dedicado exclusivamente à persistência, totalmente independente do repositório de leitura mostrado acima, sem métodos de consulta, sem <code class="language-plaintext highlighter-rouge">Get</code>, nada além de operações de escrita. Por dentro, esse repositório não geraria <code class="language-plaintext highlighter-rouge">INSERT</code>/<code class="language-plaintext highlighter-rouge">UPDATE</code> algum: ele chamaria a Service Layer via HTTP.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="nc">ISalesOrderCommandRepository</span>
+<span class="p">{</span>
+    <span class="n">Task</span> <span class="nf">SaveAsync</span><span class="p">(</span><span class="n">SalesOrder</span> <span class="n">order</span><span class="p">);</span> <span class="c1">// por dentro, chama a Service Layer via HTTP</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">SalesOrderCommandRepository</span> <span class="p">:</span> <span class="n">ISalesOrderCommandRepository</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="n">SapServiceLayerClient</span> <span class="n">_serviceLayer</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">SalesOrderCommandRepository</span><span class="p">(</span><span class="n">SapServiceLayerClient</span> <span class="n">serviceLayer</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_serviceLayer</span> <span class="p">=</span> <span class="n">serviceLayer</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">SaveAsync</span><span class="p">(</span><span class="n">SalesOrder</span> <span class="n">order</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// Delega a persistência para a Service Layer,</span>
+        <span class="c1">// preservando as regras e validações do próprio SAP</span>
+        <span class="k">await</span> <span class="n">_serviceLayer</span><span class="p">.</span><span class="nf">PostAsync</span><span class="p">(</span><span class="s">"Orders"</span><span class="p">,</span> <span class="n">order</span><span class="p">.</span><span class="nf">ToSapPayload</span><span class="p">());</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Acredito que tenha essa dúvida justamente porque minha perspectiva sobre o que um repository deve ser muda continuamente: ainda não decidi se separar a persistência assim, em um componente próprio, um repositório, que fala com a Service Layer via HTTP em vez de tocar o banco diretamente, é a forma mais correta de pensar isso, ou se existe uma abordagem melhor que eu ainda não enxerguei. É um ponto que ainda estou pensando, e que provavelmente vira assunto para outro post.</p>
+
+<h2 id="a-lição-por-trás-do-exemplo">A lição por trás do exemplo</h2>
+
+<p>O scaffold não é o vilão. Ele é uma ferramenta ótima para prototipagem rápida ou para cenários onde realmente não importa a expressividade do domínio. O problema é usá-lo como modelagem definitiva de domínio, sem uma camada de tradução entre “o que o banco externo chama as coisas” e “o que o nosso negócio chama as coisas”.</p>
+
+<p>Essa mesma armadilha, aliás, não é exclusiva de scaffold: qualquer consulta SQL pura escrita diretamente contra nomes originais de um banco de terceiros carrega o mesmo risco, uma dívida técnica que só o desenvolvedor enxerga, guardada na cabeça de quem escreveu o código ou na documentação de outro sistema.</p>
+
+<p>No fim, o aprendizado é simples de enunciar e difícil de lembrar no calor do prazo: <strong>o domínio é seu, mesmo quando o dado não é</strong>. Vale o esforço de traduzir cedo.</p>
+
+<p>Nos vemos no próximo post.</p>
+
+  </div></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/luispizzilopes" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/luis-felipe-pizzi-lopes" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><a href="mailto:luisfelipe1203lf@gmail.com" target="_blank">
+          <li>
+            <i class="icon-mail-alt"></i>
+          </li>
+        </a></ul><p class="about-footer condensed">&copy;
+        2026</p>
+      
+    </footer>
+  </main>
+  <script src="/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/assets/js/search.js"></script>
+  
+</body>
+
+</html>
