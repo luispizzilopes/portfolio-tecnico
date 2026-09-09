@@ -1,6 +1,18 @@
 [
   
     {
+      "title"    : "Unit of Work: organizando a persistência quando o Repository não é mais suficiente",
+      "title-lower"    : "unit of work: organizando a persistência quando o repository não é mais suficiente",
+      "sub-titile" : "",
+      "sub-titile-lower" : "",
+      "categories" : "C#.NETDesign Patterns",
+      "tags"     : "",
+      "url"      : "/2026/09/08/unit-of-work-organizando-a-persistencia-quando-o-repository-nao-e-mais-suficiente/",
+      "date"     : "2026-09-08 00:00:00 -0300",
+      "content"     : "Quando falamos sobre persistência e leitura de dados no desenvolvimento de aplicações, é quase automático associar o tema ao design pattern Repository, seja aplicando o conceito dentro de um contex..."
+    } ,
+  
+    {
       "title"    : "Modelagem de domínio quando parte dele não é seu: os desafios de integrações externas",
       "title-lower"    : "modelagem de domínio quando parte dele não é seu: os desafios de integrações externas",
       "sub-titile" : "",

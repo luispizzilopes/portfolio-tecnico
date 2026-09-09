@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<link rel="stylesheet" href="/assets/css/style.css">
+<title>Unit of Work: organizando a persistência quando o Repository não é mais suficiente</title>
+<!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Unit of Work: organizando a persistência quando o Repository não é mais suficiente | Luis Felipe - Dev Blog</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Unit of Work: organizando a persistência quando o Repository não é mais suficiente" />
+<meta name="author" content="Luis Felipe Pizzi Lopes" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Quando falamos sobre persistência e leitura de dados no desenvolvimento de aplicações, é quase automático associar o tema ao design pattern Repository, seja aplicando o conceito dentro de um contexto de Domain Driven Design, seja apenas como uma camada de abstração sobre o banco de dados: um intermediário entre a aplicação e uma coleção de objetos, ocultando a complexidade da persistência." />
+<meta name="twitter:description" property="og:description" content="Quando falamos sobre persistência e leitura de dados no desenvolvimento de aplicações, é quase automático associar o tema ao design pattern Repository, seja aplicando o conceito dentro de um contexto de Domain Driven Design, seja apenas como uma camada de abstração sobre o banco de dados: um intermediário entre a aplicação e uma coleção de objetos, ocultando a complexidade da persistência." />
+<link rel="canonical" href="http://localhost:4000/2026/09/08/unit-of-work-organizando-a-persistencia-quando-o-repository-nao-e-mais-suficiente/" />
+<meta property="og:url" content="http://localhost:4000/2026/09/08/unit-of-work-organizando-a-persistencia-quando-o-repository-nao-e-mais-suficiente/" />
+<meta property="og:site_name" content="Luis Felipe - Dev Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-09-08T00:00:00-03:00" />
+<meta property="article:modified_time" content="2026-09-08T00:00:00-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Unit of Work: organizando a persistência quando o Repository não é mais suficiente" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Luis Felipe Pizzi Lopes"},"dateModified":"2026-09-08T00:00:00-03:00","datePublished":"2026-09-08T00:00:00-03:00","description":"Quando falamos sobre persistência e leitura de dados no desenvolvimento de aplicações, é quase automático associar o tema ao design pattern Repository, seja aplicando o conceito dentro de um contexto de Domain Driven Design, seja apenas como uma camada de abstração sobre o banco de dados: um intermediário entre a aplicação e uma coleção de objetos, ocultando a complexidade da persistência.","headline":"Unit of Work: organizando a persistência quando o Repository não é mais suficiente","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2026/09/08/unit-of-work-organizando-a-persistencia-quando-o-repository-nao-e-mais-suficiente/"},"url":"http://localhost:4000/2026/09/08/unit-of-work-organizando-a-persistencia-quando-o-repository-nao-e-mais-suficiente/"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head><body>
+  <main class="container">
+    <section class="about">
+      <div class="about-header condensed">
+      <div class="about-title">
+      <a href="/">
+        
+        <img src="/assets/portfolio.png" alt="Luis Felipe Pizzi Lopes" />
+        
+      </a>
+      <h2 id="title">
+        <a href="/">Luis Felipe Pizzi Lopes</a>
+      </h2>
+      </div><p class="tagline">Full Stack Developer</p></div>
+      
+      <ul class="social about-footer condensed"><a href="https://github.com/luispizzilopes" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/luis-felipe-pizzi-lopes" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><a href="mailto:luisfelipe1203lf@gmail.com" target="_blank">
+          <li>
+            <i class="icon-mail-alt"></i>
+          </li>
+        </a></ul><p class="about-footer condensed">&copy;
+        2026</p>
+      
+    </section>
+    <section class="content">
+      <div class="post-container">
+  <a class="back-link" href="/">← Voltar</a>
+  <a class="post-link" href="/2026/09/08/unit-of-work-organizando-a-persistencia-quando-o-repository-nao-e-mais-suficiente/">
+    <h2 class="post-title">Unit of Work: organizando a persistência quando o Repository não é mais suficiente</h2>
+  </a>
+  <div class="post-meta">
+    <div class="post-date"><i class="icon-calendar"></i>Sep 8, 2026</div><ul class="post-categories"><li>C#</li><li>.NET</li><li>Design Patterns</li></ul></div>
+  <div class="post">
+    <p>Quando falamos sobre persistência e leitura de dados no desenvolvimento de aplicações, é quase automático associar o tema ao design pattern <strong>Repository</strong>, seja aplicando o conceito dentro de um contexto de Domain Driven Design, seja apenas como uma camada de abstração sobre o banco de dados: um intermediário entre a aplicação e uma coleção de objetos, ocultando a complexidade da persistência.</p>
+
+<p>Em sistemas que crescem em tamanho e complexidade, é comum surgirem diversos repositórios vinculados diretamente a entidades e agregados do domínio, além de repositórios somente leitura, criados para atender regras de negócio específicas definidas no escopo do projeto. Tudo isso precisa ser traduzido em código, e é aí que mora o problema: a quantidade de arquivos cresce, o controle se perde, e as dependências acabam espalhadas em diversas injeções de dependência e configurações de inversão de controle.</p>
+
+<h2 id="o-cenário-um-domínio-pequeno-até-deixar-de-ser">O cenário: um domínio pequeno até deixar de ser</h2>
+
+<p>No começo de um projeto, essa estrutura parece perfeitamente sustentável. Poucos repositórios, poucas entidades, tudo visível em uma única tela do editor. É justamente por isso que o Unit of Work costuma ser subestimado logo de início: parece apenas mais uma camada de abstração, um esforço de implementação que não traz retorno imediato.</p>
+
+<p>O problema é que esse raciocínio só se sustenta enquanto o projeto é pequeno. Conforme o domínio da aplicação cresce, cresce junto o número de repositórios, de agregados e de regras de negócio que dependem de mais de uma entidade sendo persistida ao mesmo tempo. É nesse momento que perguntas incômodas começam a aparecer.</p>
+
+<p>Como garantir que a atualização de duas ou três entidades diferentes aconteça de forma atômica, sem deixar o banco em um estado inconsistente se uma das operações falhar no meio do caminho? Como evitar que cada serviço da aplicação precise injetar cinco, dez, quinze repositórios diferentes só para completar uma única operação de negócio? Como testar essa orquestração sem precisar montar um cenário de mock gigantesco, com um repositório fake para cada dependência?</p>
+
+<h2 id="o-problema-transação-sem-dono">O problema: transação sem dono</h2>
+
+<p>Sem uma camada que coordene esses repositórios, a tendência natural é que cada desenvolvedor resolva esse problema à sua maneira: um <code class="language-plaintext highlighter-rouge">SaveChanges</code> aqui, um <code class="language-plaintext highlighter-rouge">try/catch</code> com rollback manual ali, uma transação aberta diretamente no serviço em outro lugar. O resultado é um código inconsistente, difícil de manter e, principalmente, difícil de confiar.</p>
+
+<p>O Unit of Work atua como uma camada de coordenação entre os repositórios, sendo responsável por controlar o início, a confirmação (commit) e o desfazimento (rollback) de uma transação que pode envolver múltiplas entidades e múltiplos repositórios ao mesmo tempo. Em vez de cada repositório persistir suas próprias alterações de forma isolada, o Unit of Work centraliza esse controle, garantindo que um conjunto de operações seja tratado como uma única unidade atômica, daí o nome.</p>
+
+<p>Isso significa que, se uma regra de negócio precisa atualizar um pedido, debitar um estoque e registrar um evento de auditoria, todas essas operações passam a fazer parte da mesma transação, coordenada por um único ponto do código. Se qualquer uma delas falhar, nenhuma é persistida.</p>
+
+<h2 id="o-que-eu-ganho-além-da-transação">O que eu ganho além da transação</h2>
+
+<p>Embora a atomicidade seja o benefício mais evidente, o Unit of Work traz uma série de outras vantagens que se tornam cada vez mais valiosas conforme o projeto escala.</p>
+
+<p><strong>Consistência transacional real.</strong> Operações que envolvem múltiplos agregados deixam de depender de código de controle de transação espalhado pela aplicação. Toda a lógica de commit e rollback fica concentrada em um único lugar, reduzindo drasticamente o risco de inconsistência de dados.</p>
+
+<p><strong>Redução da complexidade de injeção de dependência.</strong> Em vez de um serviço depender diretamente de vários repositórios, ele passa a depender de uma única Unit of Work, que expõe os repositórios necessários. Isso simplifica a configuração de inversão de controle e deixa as assinaturas de construtores muito mais enxutas.</p>
+
+<p><strong>Facilidade para testes.</strong> Como toda a coordenação de persistência passa por um único ponto, fica muito mais simples criar um mock ou uma implementação em memória da Unit of Work para testes unitários, sem precisar simular o comportamento de dezenas de repositórios isolados.</p>
+
+<p><strong>Desacoplamento entre regra de negócio e infraestrutura de persistência.</strong> A camada de aplicação ou de domínio não precisa saber como e quando o commit acontece. Ela apenas define o que precisa ser feito, e a Unit of Work garante que isso será persistido de forma correta e consistente.</p>
+
+<p><strong>Organização e rastreabilidade do código.</strong> Com o tempo, fica muito mais fácil localizar onde as transações acontecem e entender o fluxo de persistência da aplicação, já que ele não está mais pulverizado em múltiplos pontos do código.</p>
+
+<p><strong>Menor duplicação de código.</strong> Lógicas de abertura de conexão, controle de transação e tratamento de exceções deixam de ser reescritas repositório por repositório, serviço por serviço.</p>
+
+<h2 id="um-exemplo-simples">Um exemplo simples</h2>
+
+<p>Uma implementação básica de Unit of Work costuma expor os repositórios necessários e um método de confirmação das alterações.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">interface</span> <span class="nc">IUnitOfWork</span> <span class="p">:</span> <span class="n">IDisposable</span>
+<span class="p">{</span>
+    <span class="n">IOrderRepository</span> <span class="n">Orders</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">IInventoryRepository</span> <span class="n">Inventory</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+    <span class="n">IAuditLogRepository</span> <span class="n">AuditLogs</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="n">Task</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="nf">CommitAsync</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">UnitOfWork</span> <span class="p">:</span> <span class="n">IUnitOfWork</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="n">AppDbContext</span> <span class="n">_context</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="n">IOrderRepository</span> <span class="n">Orders</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="n">IInventoryRepository</span> <span class="n">Inventory</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">public</span> <span class="n">IAuditLogRepository</span> <span class="n">AuditLogs</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">public</span> <span class="nf">UnitOfWork</span><span class="p">(</span><span class="n">AppDbContext</span> <span class="n">context</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_context</span> <span class="p">=</span> <span class="n">context</span><span class="p">;</span>
+        <span class="n">Orders</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">OrderRepository</span><span class="p">(</span><span class="n">_context</span><span class="p">);</span>
+        <span class="n">Inventory</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">InventoryRepository</span><span class="p">(</span><span class="n">_context</span><span class="p">);</span>
+        <span class="n">AuditLogs</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">AuditLogRepository</span><span class="p">(</span><span class="n">_context</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="nf">CommitAsync</span><span class="p">()</span>
+        <span class="p">=&gt;</span> <span class="k">await</span> <span class="n">_context</span><span class="p">.</span><span class="nf">SaveChangesAsync</span><span class="p">();</span>
+
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Dispose</span><span class="p">()</span> <span class="p">=&gt;</span> <span class="n">_context</span><span class="p">.</span><span class="nf">Dispose</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>No serviço de aplicação, o uso fica bastante direto.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">CompleteOrderAsync</span><span class="p">(</span><span class="kt">int</span> <span class="n">orderId</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">var</span> <span class="n">order</span> <span class="p">=</span> <span class="k">await</span> <span class="n">_unitOfWork</span><span class="p">.</span><span class="n">Orders</span><span class="p">.</span><span class="nf">GetByIdAsync</span><span class="p">(</span><span class="n">orderId</span><span class="p">);</span>
+
+    <span class="n">order</span><span class="p">.</span><span class="nf">Complete</span><span class="p">();</span>
+    <span class="n">_unitOfWork</span><span class="p">.</span><span class="n">Inventory</span><span class="p">.</span><span class="nf">Debit</span><span class="p">(</span><span class="n">order</span><span class="p">.</span><span class="n">Items</span><span class="p">);</span>
+    <span class="n">_unitOfWork</span><span class="p">.</span><span class="n">AuditLogs</span><span class="p">.</span><span class="nf">Register</span><span class="p">(</span><span class="s">"Order completed"</span><span class="p">,</span> <span class="n">orderId</span><span class="p">);</span>
+
+    <span class="k">await</span> <span class="n">_unitOfWork</span><span class="p">.</span><span class="nf">CommitAsync</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>O serviço não sabe nada sobre transação, conexão ou banco de dados. Ele apenas orquestra a regra de negócio e delega a persistência à Unit of Work.</p>
+
+<h2 id="quando-vale-a-pena-adotar">Quando vale a pena adotar</h2>
+
+<p>O Unit of Work não é uma bala de prata nem deve ser aplicado indiscriminadamente. Em aplicações muito pequenas, com poucas entidades e sem operações que envolvam múltiplos agregados, a camada extra pode realmente representar apenas complexidade desnecessária.</p>
+
+<p>Mas à medida que o domínio cresce, que novas regras de negócio passam a envolver mais de uma entidade por operação e que o número de repositórios se multiplica, o padrão deixa de ser opcional na prática. Ele se torna a diferença entre um código organizado e sustentável e um código onde ninguém sabe mais ao certo onde e como as transações são controladas.</p>
+
+<h2 id="a-lição-por-trás-do-exemplo">A lição por trás do exemplo</h2>
+
+<p>O Unit of Work não substitui o Repository, trabalha em conjunto com ele, adicionando a peça que faltava: coordenação. Ao centralizar o controle transacional, reduzir a complexidade de injeção de dependência e facilitar testes, ele contribui diretamente para a manutenibilidade e a escalabilidade da aplicação como um todo.</p>
+
+<p>O padrão não resolve problemas de design ruins, nem substitui uma modelagem cuidadosa do domínio. Mas, quando o contexto pede coordenação entre múltiplos repositórios, ele é a abstração certa no lugar certo, e ignorá-lo costuma significar reinventá-lo de forma pior, espalhada e inconsistente pelo código.</p>
+
+<p>Nos vemos no próximo post.</p>
+
+  </div></div>
+
+    </section>
+    <footer class="condensed">
+      <ul class="social about-footer condensed"><a href="https://github.com/luispizzilopes" target="_blank">
+          <li>
+            <i class="icon-github-circled"></i>
+          </li>
+        </a><a href="https://www.linkedin.com/in/luis-felipe-pizzi-lopes" target="_blank">
+          <li>
+            <i class="icon-linkedin-squared"></i>
+          </li>
+        </a><a href="mailto:luisfelipe1203lf@gmail.com" target="_blank">
+          <li>
+            <i class="icon-mail-alt"></i>
+          </li>
+        </a></ul><p class="about-footer condensed">&copy;
+        2026</p>
+      
+    </footer>
+  </main>
+  <script src="/assets/js/simple-jekyll-search.min.js"></script>
+  <script src="/assets/js/search.js"></script>
+  
+</body>
+
+</html>
