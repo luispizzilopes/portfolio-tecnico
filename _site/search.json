@@ -1,6 +1,18 @@
 [
   
     {
+      "title"    : "Código que fala por si: escrever para ser entendido, não apenas para funcionar",
+      "title-lower"    : "código que fala por si: escrever para ser entendido, não apenas para funcionar",
+      "sub-titile" : "",
+      "sub-titile-lower" : "",
+      "categories" : "ArquiteturaClean ArchitectureEngenharia de Software",
+      "tags"     : "",
+      "url"      : "/2026/09/12/codigo-que-fala-por-si-escrever-para-ser-entendido-nao-apenas-para-funcionar/",
+      "date"     : "2026-09-12 00:00:00 +0000",
+      "content"     : "Existem projetos que passam pela nossa carreira e outros que ficam. Este é sobre um dos que ficou, não pela tecnologia em si, mas pelo tanto que me ensinou sobre entender um problema antes de tenta..."
+    } ,
+  
+    {
       "title"    : "Unit of Work: organizando a persistência quando o Repository não é mais suficiente",
       "title-lower"    : "unit of work: organizando a persistência quando o repository não é mais suficiente",
       "sub-titile" : "",
@@ -8,7 +20,7 @@
       "categories" : "C#.NETDesign Patterns",
       "tags"     : "",
       "url"      : "/2026/09/08/unit-of-work-organizando-a-persistencia-quando-o-repository-nao-e-mais-suficiente/",
-      "date"     : "2026-09-08 00:00:00 -0300",
+      "date"     : "2026-09-08 00:00:00 +0000",
       "content"     : "Quando falamos sobre persistência e leitura de dados no desenvolvimento de aplicações, é quase automático associar o tema ao design pattern Repository, seja aplicando o conceito dentro de um contex..."
     } ,
   
@@ -20,7 +32,7 @@
       "categories" : "C#.NETDomain-Driven DesignArquitetura",
       "tags"     : "",
       "url"      : "/2026/08/31/modelagem-de-dominio-quando-parte-dele-nao-e-seu/",
-      "date"     : "2026-08-31 00:00:00 -0300",
+      "date"     : "2026-08-31 00:00:00 +0000",
       "content"     : "Quando assumimos o desenvolvimento de um sistema que precisa se integrar com um software externo, é comum pensarmos primeiro nos detalhes técnicos da comunicação: autenticação, protocolo, formato d..."
     } ,
   
@@ -32,7 +44,7 @@
       "categories" : "",
       "tags"     : "",
       "url"      : "/2026/08/28/ola-mundo.html",
-      "date"     : "2026-08-28 00:00:00 -0300",
+      "date"     : "2026-08-28 00:00:00 +0000",
       "content"     : "Prazer, eu sou Luis Felipe, Desenvolvedor Full Stack.Depois de alguns anos escrevendo código, corrigindo bugs, investigando problemas em produção e tomando decisões de arquitetura, algumas acertada..."
     } 
   

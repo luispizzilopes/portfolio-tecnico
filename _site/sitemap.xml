@@ -5,22 +5,27 @@
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
         <url>
-            <loc>http://localhost:4000</loc>
-	    <lastmod>2026-09-08T22:14:23-03:00</lastmod>
+            <loc></loc>
+	    <lastmod>2026-09-12T20:56:26+00:00</lastmod>
             <priority>1.00</priority>
         </url><url>
-                <loc>http://localhost:4000/2026/09/08/unit-of-work-organizando-a-persistencia-quando-o-repository-nao-e-mais-suficiente/</loc>
-                <lastmod>2026-09-08T00:00:00-03:00</lastmod>
+                <loc>/2026/09/12/codigo-que-fala-por-si-escrever-para-ser-entendido-nao-apenas-para-funcionar/</loc>
+                <lastmod>2026-09-12T00:00:00+00:00</lastmod>
                 <changefreq>weekly</changefreq>
                 <priority>0.80</priority>
             </url><url>
-                <loc>http://localhost:4000/2026/08/31/modelagem-de-dominio-quando-parte-dele-nao-e-seu/</loc>
-                <lastmod>2026-08-31T00:00:00-03:00</lastmod>
+                <loc>/2026/09/08/unit-of-work-organizando-a-persistencia-quando-o-repository-nao-e-mais-suficiente/</loc>
+                <lastmod>2026-09-08T00:00:00+00:00</lastmod>
                 <changefreq>weekly</changefreq>
                 <priority>0.80</priority>
             </url><url>
-                <loc>http://localhost:4000/2026/08/28/ola-mundo.html</loc>
-                <lastmod>2026-08-28T00:00:00-03:00</lastmod>
+                <loc>/2026/08/31/modelagem-de-dominio-quando-parte-dele-nao-e-seu/</loc>
+                <lastmod>2026-08-31T00:00:00+00:00</lastmod>
+                <changefreq>weekly</changefreq>
+                <priority>0.80</priority>
+            </url><url>
+                <loc>/2026/08/28/ola-mundo.html</loc>
+                <lastmod>2026-08-28T00:00:00+00:00</lastmod>
                 <changefreq>weekly</changefreq>
                 <priority>0.80</priority>
             </url></urlset>
